@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BlazeBolt Engine — Скачать 2D игровой движок на Lua</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0d1117;--bg2:#161b22;--card:#1a1e24;--border:#30363d;--accent:#ff6b35;--accent2:#ffa500;--text:#e6edf3;--muted:#8b949e;--link:#58a6ff}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:var(--link);text-decoration:none}
+a:hover{text-decoration:underline}
+img{max-width:100%;height:auto}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(13,17,23,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+.nav-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:64px}
+.nav-logo{display:flex;align-items:center;gap:10px;font-size:1.2rem;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.nav-links{display:flex;align-items:center;gap:28px}
+.nav-links a{color:var(--muted);font-size:.88rem;font-weight:500;transition:color .15s}
+.nav-links a:hover{color:var(--text);text-decoration:none}
+.nav-cta{padding:8px 20px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff!important;border-radius:6px;font-weight:600!important;font-size:.85rem!important;transition:opacity .15s}
+.nav-cta:hover{opacity:.9;text-decoration:none!important}
+.nav-mobile-btn{display:none;background:none;border:none;color:var(--text);font-size:1.4rem;cursor:pointer;padding:4px}
+
+.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:100px 24px 80px;position:relative;overflow:hidden}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(255,107,53,.08) 0%,transparent 60%),radial-gradient(ellipse at 80% 80%,rgba(255,165,0,.05) 0%,transparent 50%);pointer-events:none}
+.hero-content{position:relative;z-index:1;max-width:800px}
+.hero-badge{display:inline-block;padding:6px 16px;background:rgba(255,107,53,.12);border:1px solid rgba(255,107,53,.3);border-radius:20px;font-size:.82rem;color:var(--accent);font-weight:600;margin-bottom:24px}
+.hero h1{font-size:4rem;font-weight:900;line-height:1.1;margin-bottom:16px;background:linear-gradient(135deg,var(--accent),var(--accent2),#ffd700);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero p{font-size:1.2rem;color:var(--muted);max-width:600px;margin:0 auto 36px;line-height:1.7}
+.hero-btns{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+.btn-primary{padding:14px 36px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border-radius:8px;font-weight:700;font-size:1rem;transition:transform .2s,box-shadow .2s;display:inline-flex;align-items:center;gap:8px}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(255,107,53,.35);text-decoration:none}
+.btn-secondary{padding:14px 36px;background:var(--bg2);border:1px solid var(--border);color:var(--text);border-radius:8px;font-weight:600;font-size:1rem;transition:all .2s;display:inline-flex;align-items:center;gap:8px}
+.btn-secondary:hover{background:var(--card);border-color:var(--muted);transform:translateY(-2px);text-decoration:none}
+.hero-stats{display:flex;gap:48px;margin-top:48px;justify-content:center;flex-wrap:wrap}
+.hero-stat{text-align:center}
+.hero-stat-num{font-size:1.8rem;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-stat-label{font-size:.82rem;color:var(--muted);margin-top:2px}
+
+section{padding:100px 24px}
+.section-inner{max-width:1200px;margin:0 auto}
+.section-label{display:inline-block;font-size:.8rem;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px}
+.section-title{font-size:2.4rem;font-weight:800;margin-bottom:16px}
+.section-sub{font-size:1.05rem;color:var(--muted);max-width:640px;margin-bottom:56px}
+
+.features-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px}
+.feature-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:28px 24px;transition:transform .2s,border-color .2s}
+.feature-card:hover{transform:translateY(-4px);border-color:var(--accent)}
+.feature-icon{width:48px;height:48px;border-radius:10px;background:rgba(255,107,53,.1);display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin-bottom:16px}
+.feature-card h3{font-size:1.05rem;font-weight:700;margin-bottom:8px}
+.feature-card p{font-size:.88rem;color:var(--muted);line-height:1.6}
+
+.showcase-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:24px}
+.showcase-card{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:transform .2s,border-color .2s}
+.showcase-card:hover{transform:translateY(-4px);border-color:var(--accent)}
+.showcase-img{width:100%;aspect-ratio:16/9;background:var(--bg2);display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:.9rem;overflow:hidden}
+.showcase-img img{width:100%;height:100%;object-fit:cover}
+.showcase-body{padding:20px 24px 24px}
+.showcase-body h3{font-size:1.05rem;font-weight:700;margin-bottom:4px}
+.showcase-body p{font-size:.85rem;color:var(--muted)}
+
+.download-section{text-align:center;background:linear-gradient(135deg,rgba(255,107,53,.06),rgba(255,165,0,.04));border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.download-section .section-title{font-size:2.6rem}
+.download-info{display:flex;justify-content:center;gap:40px;margin-top:24px;flex-wrap:wrap}
+.download-info-item{text-align:center}
+.download-info-item .label{font-size:.82rem;color:var(--muted)}
+.download-info-item .value{font-size:1.1rem;font-weight:700;color:var(--text);margin-top:2px}
+.download-note{margin-top:20px;font-size:.88rem;color:var(--muted)}
+.download-note a{color:var(--accent);font-weight:600}
+
+.cta-section{text-align:center}
+.cta-section .section-title{font-size:2.2rem}
+.cta-btns{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+
+footer{background:var(--bg2);border-top:1px solid var(--border);padding:60px 24px 40px}
+.footer-inner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px}
+.footer-brand .nav-logo{margin-bottom:12px}
+.footer-brand p{font-size:.85rem;color:var(--muted);max-width:300px;line-height:1.6}
+.footer-col h4{font-size:.85rem;font-weight:700;color:var(--text);margin-bottom:12px;text-transform:uppercase;letter-spacing:.5px}
+.footer-col a{display:block;font-size:.85rem;color:var(--muted);padding:4px 0;transition:color .15s}
+.footer-col a:hover{color:var(--text);text-decoration:none}
+.footer-bottom{border-top:1px solid var(--border);margin-top:40px;padding-top:24px;text-align:center;font-size:.82rem;color:var(--muted)}
+
+@media(max-width:860px){
+  .nav-links{display:none;position:fixed;top:64px;left:0;right:0;background:var(--bg2);border-bottom:1px solid var(--border);flex-direction:column;padding:16px 24px;gap:16px}
+  .nav-links.open{display:flex}
+  .nav-mobile-btn{display:block}
+  .hero h1{font-size:2.4rem}
+  .hero-stats{gap:24px}
+  section{padding:60px 16px}
+  .section-title{font-size:1.8rem}
+  .footer-inner{grid-template-columns:1fr;gap:24px}
+  .features-grid,.showcase-grid{grid-template-columns:1fr}
+  .download-info{gap:20px}
+}
+</style>
+</head>
+<body>
+
+<nav>
+<div class="nav-inner">
+  <a href="#" class="nav-logo">&#128293; BlazeBolt</a>
+  <div class="nav-links" id="navLinks">
+    <a href="#features">Возможности</a>
+    <a href="docs.html">Документация</a>
+    <a href="bin.zip" class="nav-cta">&#11088; Скачать v1.2</a>
+  </div>
+  <button class="nav-mobile-btn" id="navToggle" aria-label="Menu">&#9776;</button>
+</div>
+</nav>
+
+<section class="hero">
+<div class="hero-bg"></div>
+<div class="hero-content">
+  <span class="hero-badge">&#128293; BlazeBolt Engine v1.2 — Стабильная версия</span>
+  <h1>Скачай BlazeBolt и создавай игры на Lua</h1>
+  <p>Лёгкий 2D-движок с собственным физическим движком, системой частиц, освещением, редактором сцен, аудио и сетевым стеком. Всё из коробки.</p>
+  <div class="hero-btns">
+    <a href="bin.zip" class="btn-primary">&#11088; Скачать BlazeBolt v1.2</a>
+    <a href="docs.html" class="btn-secondary">&#128214; Документация</a>
+  </div>
+  <div class="download-info" style="margin-top:16px">
+    <div class="download-info-item"><div class="label">Версия</div><div class="value">1.2 stable</div></div>
+    <div class="download-info-item"><div class="label">Платформа</div><div class="value">Windows 10/11</div></div>
+    <div class="download-info-item"><div class="label">Скриптинг</div><div class="value">Lua 5.4</div></div>
+    <div class="download-info-item"><div class="label">Рендеринг</div><div class="value">OpenGL 3.3</div></div>
+  </div>
+</div>
+</section>
+
+<section id="features">
+<div class="section-inner">
+  <div class="section-label">Возможности</div>
+  <h2 class="section-title">Всё для 2D-игры в одном скачивании</h2>
+  <p class="section-sub">BlazeBolt предоставляет полный набор инструментов для создания 2D-игр — от спрайтов и анимаций до физики и сетевого взаимодействия.</p>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">&#127912;</div>
+      <h3>Спрайты и анимации</h3>
+      <p>Спрайты с текстурными атласами, анимированные спрайты (GIF), AnimationWheel для переключения состояний.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">&#9881;&#65039;</div>
+      <h3>Собственная физика</h3>
+      <p>Собственный физический движок: статические, кинематические и динамические тела, коллайдеры, силы, импульсы.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">&#127765;</div>
+      <h3>Система частиц</h3>
+      <p>GPU-инстансированная система частиц с настраиваемым временем жизни, скоростью, размером, цветом и направлением.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">&#127752;</div>
+      <h3>Освещение</h3>
+      <p>Точечные и фоновые источники света с настраиваемым цветом, интенсивностью и радиусом.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">&#127916;</div>
+      <h3>Кастомные шейдеры</h3>
+      <p>Поддержка пользовательских вершинных и фрагментных шейдеров через Mesh-объекты с uniform-переменными.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">&#127911;</div>
+      <h3>Аудио (OpenAL)</h3>
+      <p>Загрузка звуков, 3D-позиционирование, спикер, EFX-эффекты (реверберация и др.), фильтры.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">&#127760;</div>
+      <h3>Сеть (TCP/UDP)</h3>
+      <p>Встроенный сетевой стек: TCP/UDP серверы и клиенты для многопользовательских игр.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">&#127922;</div>
+      <h3>Тайловые карты</h3>
+      <p>Tileset2D с поддержкой текстурных атласов, установкой тайлов по сетке.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">&#128200;</div>
+      <h3>Процедурные шумы</h3>
+      <p>Перлин, симплекс, Value Noise, FBM и Domain Warp для генерации миров и эффектов.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">&#128190;</div>
+      <h3>Математические типы</h3>
+      <p>Vector2/3/4, Matrix3x3 с операторами и методами для работы с трансформациями.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">&#128193;</div>
+      <h3>Сцены и редактор</h3>
+      <p>Формат .scene (JSON), хаб/редактор с инспектором, Gizmo, загрузка и сохранение сцен.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">&#128221;</div>
+      <h3>Lua API</h3>
+      <p>Полный Lua 5.4 скриптинг с lifecycle-коллбеками (Start/Update/Draw/End), загрузка скриптов на лету.</p>
+    </div>
+  </div>
+</div>
+</section>
+
+
+
+<section class="download-section" id="download">
+<div class="section-inner">
+  <div class="section-label">Скачать</div>
+  <h2 class="section-title">Готов к старту?</h2>
+  <p style="color:var(--muted);max-width:560px;margin:0 auto 32px;font-size:1.05rem;line-height:1.7">Скачай стабильную версию BlazeBolt 1.2 и начинай создавать игры прямо сейчас.</p>
+  <div class="cta-btns">
+    <a href="bin.zip" class="btn-primary" style="font-size:1.15rem;padding:16px 48px">&#11088; Скачать v1.2 (stable)</a>
+  </div>
+</div>
+</section>
+
+
+<footer>
+<div class="footer-inner">
+  <div class="footer-brand">
+    <div class="nav-logo" style="margin-bottom:12px">&#128293; BlazeBolt</div>
+    <p>Лёгкий 2D-игровой движок со скриптингом на Lua. Разрабатывается студией Mirulit Software.</p>
+  </div>
+  <div class="footer-col">
+    <h4>Скачать</h4>
+    <a href="bin.zip">BlazeBolt v1.2 (stable)</a>
+  </div>
+  <div class="footer-col">
+    <h4>Документация</h4>
+    <a href="docs.html">Lua API Reference</a>
+    <a href="docs.html#callbacks">Lifecycle</a>
+    <a href="docs.html#sprites">Спрайты</a>
+    <a href="docs.html#physics">Физика</a>
+    <a href="docs.html#audio">Аудио</a>
+    <a href="docs.html#scenefile">Формат .scene</a>
+  </div>
+</div>
+<div class="footer-bottom">&copy; 2026 Mirulit Software.</div>
+</footer>
+
+<script>
+document.getElementById('navToggle').addEventListener('click', function() {
+  document.getElementById('navLinks').classList.toggle('open');
+});
+document.querySelectorAll('.nav-links a').forEach(a => {
+  a.addEventListener('click', () => document.getElementById('navLinks').classList.remove('open'));
+});
+</script>
+</body>
+</html>
